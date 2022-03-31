@@ -1,8 +1,8 @@
 #!/bin/bash
 
-export PGHOST=postgresql-clap2-dev.postgres.database.azure.com
-export PGUSER=clap2_env_dev
-export PGPASSWORD=HKJCbLxsB6hJ
+export PGHOST= #Postgre URL
+export PGUSER= #Login account
+export PGPASSWORD= #Password
 export PGPORT=5432
 
 # Location to place backups.
