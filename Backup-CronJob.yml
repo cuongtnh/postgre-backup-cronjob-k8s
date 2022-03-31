@@ -3,7 +3,7 @@ kind: CronJob
 metadata:
   name: postgre-backup-daily
 spec:
-  schedule: "0 */12 * * *"  #Schedule in GMT timezone, need to change it based on HK time zone
+  schedule: "0 */12 * * *"  #Schedule in GMT timezone, need to change it based on your time zone
   startingDeadlineSeconds: 600
   jobTemplate:
     spec:
