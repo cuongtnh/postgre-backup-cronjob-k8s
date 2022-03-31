@@ -1,0 +1,23 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: postgre-backup-daily-manual
+  namespace: dev
+spec:
+  backoffLimit: 20
+  selector:
+  template:
+    spec:
+      containers:
+      - image: cuongtnh/postgres-back-up:latest
+        imagePullPolicy: Always
+        name: pgsql-backup
+        resources: {}
+        volumeMounts:
+        - mountPath: /pg_backup
+          name: backup-volume
+      restartPolicy: OnFailure
+      volumes:
+      - name: backup-volume
+        persistentVolumeClaim:
+          claimName: pg-backup-pvc
