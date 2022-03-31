@@ -1,0 +1,55 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: postgre-backup-daily
+spec:
+  schedule: "0 */12 * * *"  #Schedule in GMT timezone, need to change it based on HK time zone
+  startingDeadlineSeconds: 600
+  jobTemplate:
+    spec:
+      backoffLimit: 20
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+          - name: pgsql-backup
+            image: cuongtnh/postgres-back-up:latest #Need to push the image to Privte ACR
+            volumeMounts:
+            - mountPath: "/pg_backup"
+              name: backup-volume
+            imagePullPolicy: Always
+          volumes:
+            - name: backup-volume
+              persistentVolumeClaim:
+                claimName: pg-backup-pvc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pg-backup-pvc
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: backup-storage
+  resources:
+    requests:
+      storage: 10Gi
+
+---
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: backup-storage
+provisioner: kubernetes.io/azure-file
+allowVolumeExpansion: true
+mountOptions:
+  - dir_mode=0777
+  - file_mode=0777
+  - uid=0
+  - gid=0
+  - mfsymlinks
+  - cache=strict
+  - actimeo=30
+parameters:
+  skuName: Standard_LRS
+
